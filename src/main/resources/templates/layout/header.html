@@ -1,19 +1,137 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
-<head th:fragment="header">
+
+<head th:fragment="head">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${pageTitle != null ? pageTitle + ' - 나의 영감 저장소' : '나의 영감 저장소'}">나의 영감 저장소</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title th:text="${pageTitle != null ? pageTitle + ' - 나의 스티커 다이어리' : '나의 스티커 다이어리'}">나의 스티커 다이어리</title>
 
-    <!-- Google Fonts -->
+    <meta name="description" content="일상 속 영감을 저장하는 감성적인 공간">
+    <meta name="keywords" content="영감, 다이어리, 스티커, 감성, 브런치, 핀터레스트">
+    <meta name="author" content="나의 스티커 다이어리">
+
+    <meta property="og:title" th:content="${pageTitle != null ? pageTitle : '나의 스티커 다이어리'}">
+    <meta property="og:description" content="일상 속 영감을 저장하는 감성적인 공간">
+    <meta property="og:type" content="website">
+    <meta property="og:url" th:content="@{/}">
+
+    <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- CSS -->
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Axios (선택사항) -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+    <script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
+
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "나의 스티커 다이어리",
+            "description": "일상 속 영감을 저장하는 감성적인 공간",
+            "url": "https://yourwebsite.com"
+        }
+    </script>
 </head>
+
+<body>
+
+<div th:fragment="header" class="sticky top-0 z-50 bg-white backdrop-blur-md border-b border-[#E8D5C4]/30 transition-all duration-300">
+    <div class="max-w-[1800px] mx-auto px-6 h-[72px] flex items-center justify-between">
+        <a href="/" class="group flex items-center gap-2">
+            <div class="w-8 h-8 bg-[#D4C4B0] rounded-full flex items-center justify-center text-white font-serif italic text-lg group-hover:bg-[#C9B5A0] transition-colors">
+                i
+            </div>
+            <span class="text-xl font-semibold tracking-tight text-[#5A4D41] group-hover:text-[#3E342C] transition-colors"
+                  style="font-family: 'Playfair Display', serif;">
+                나의 스티커 다이어리
+            </span>
+        </a>
+
+        <div class="flex items-center gap-4">
+            <button onclick="openSearchModal()" class="p-2 text-[#8B7355] hover:bg-[#F9F6F1] rounded-full transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </button>
+            <button class="p-2 text-[#8B7355] hover:bg-[#F9F6F1] rounded-full transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="searchModal" id="searchModal" class="fixed inset-0 z-[100] hidden">
+    <div class="absolute inset-0 bg-black/20 backdrop-blur-sm transition-opacity" onclick="closeSearchModal()"></div>
+    <div class="absolute top-0 left-0 right-0 bg-white p-6 shadow-xl transform transition-transform duration-300 -translate-y-full" id="searchContent">
+        <div class="max-w-3xl mx-auto relative">
+            <input type="text"
+                   placeholder="영감을 검색해보세요..."
+                   class="w-full text-2xl font-light border-b-2 border-[#E8D5C4] py-4 focus:outline-none focus:border-[#D4C4B0] bg-transparent placeholder-[#D4C4B0]/50"
+                   style="font-family: 'Noto Sans KR', sans-serif;"
+                   autofocus
+            >
+            <button onclick="closeSearchModal()" class="absolute right-0 top-1/2 -translate-y-1/2 p-2 text-[#A89080] hover:text-[#8B7355]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script th:fragment="commonScript" th:inline="javascript">
+    /*<![CDATA[*/
+    // 페이지 이동
+    function navigateToView(id) {
+        window.location.href = `/posts/${id}`;
+    }
+
+    // 글쓰기 페이지로 이동
+    function navigateToCreate() {
+        window.location.href = '/posts/create';
+    }
+
+    // 검색 모달 관련 함수
+    function openSearchModal() {
+        const modal = document.getElementById('searchModal');
+        const content = document.getElementById('searchContent');
+        if (modal && content) {
+            modal.classList.remove('hidden');
+            // 애니메이션을 위한 약간의 지연
+            setTimeout(() => {
+                content.classList.remove('-translate-y-full');
+            }, 10);
+            // 입력창 포커스
+            const input = modal.querySelector('input');
+            if(input) input.focus();
+        }
+    }
+
+    function closeSearchModal() {
+        const modal = document.getElementById('searchModal');
+        const content = document.getElementById('searchContent');
+        if (modal && content) {
+            content.classList.add('-translate-y-full');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+    }
+    /*]]>*/
+</script>
+
+</body>
 </html>

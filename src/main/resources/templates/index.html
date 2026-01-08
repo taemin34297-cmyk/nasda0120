@@ -1,112 +1,286 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{layout/header :: header}"></head>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="~{layout/header :: head}"></head>
 
-<body>
-<!-- 헤더 -->
-<header class="main-header">
-    <div class="header-container">
-        <!-- 로고 -->
-        <h1 class="logo">나의 스티커 다이어리</h1>
+<body class="min-h-screen bg-white">
+<div th:replace="~{layout/header :: header}"></div>
 
-        <!-- 검색창 (데스크탑) -->
-        <div class="search-container desktop-only">
-            <form th:action="@{/search}" method="get">
-                <select name="type" class="search-type">
-                    <option value="내용">내용</option>
-                    <option value="제목">제목</option>
-                    <option value="작성자">작성자</option>
-                    <option value="카테고리">카테고리</option>
-                </select>
-                <input type="text" name="keyword" placeholder="검색어를 입력하세요" class="search-input" required>
-                <button type="submit" class="search-btn">검색</button>
-            </form>
+<div class="sticky top-[73px] z-40 bg-white border-b border-[#E8D5C4]/30">
+    <div class="max-w-[1800px] mx-auto px-6 py-4">
+        <div class="flex gap-3 overflow-x-auto scrollbar-hide scroll-smooth">
+            <button onclick="setActiveCategory('전체')" class="category-btn flex-shrink-0 px-6 py-2 rounded-full transition-all duration-300 cursor-pointer bg-[#D4C4B0] text-white" style="font-family: 'Noto Sans KR', sans-serif;" data-category="전체">전체</button>
+            <button onclick="setActiveCategory('디자인')" class="category-btn flex-shrink-0 px-6 py-2 rounded-full transition-all duration-300 cursor-pointer bg-[#F9F6F1] text-[#8B7355] hover:bg-[#F0EBE3]" style="font-family: 'Noto Sans KR', sans-serif;" data-category="디자인">디자인</button>
+            <button onclick="setActiveCategory('아트')" class="category-btn flex-shrink-0 px-6 py-2 rounded-full transition-all duration-300 cursor-pointer bg-[#F9F6F1] text-[#8B7355] hover:bg-[#F0EBE3]" style="font-family: 'Noto Sans KR', sans-serif;" data-category="아트">아트</button>
+            <button onclick="setActiveCategory('사진')" class="category-btn flex-shrink-0 px-6 py-2 rounded-full transition-all duration-300 cursor-pointer bg-[#F9F6F1] text-[#8B7355] hover:bg-[#F0EBE3]" style="font-family: 'Noto Sans KR', sans-serif;" data-category="사진">사진</button>
+            <button onclick="setActiveCategory('패션')" class="category-btn flex-shrink-0 px-6 py-2 rounded-full transition-all duration-300 cursor-pointer bg-[#F9F6F1] text-[#8B7355] hover:bg-[#F0EBE3]" style="font-family: 'Noto Sans KR', sans-serif;" data-category="패션">패션</button>
+            <button onclick="setActiveCategory('인테리어')" class="category-btn flex-shrink-0 px-6 py-2 rounded-full transition-all duration-300 cursor-pointer bg-[#F9F6F1] text-[#8B7355] hover:bg-[#F0EBE3]" style="font-family: 'Noto Sans KR', sans-serif;" data-category="인테리어">인테리어</button>
+            <button onclick="setActiveCategory('음식')" class="category-btn flex-shrink-0 px-6 py-2 rounded-full transition-all duration-300 cursor-pointer bg-[#F9F6F1] text-[#8B7355] hover:bg-[#F0EBE3]" style="font-family: 'Noto Sans KR', sans-serif;" data-category="음식">음식</button>
+            <button onclick="setActiveCategory('여행')" class="category-btn flex-shrink-0 px-6 py-2 rounded-full transition-all duration-300 cursor-pointer bg-[#F9F6F1] text-[#8B7355] hover:bg-[#F0EBE3]" style="font-family: 'Noto Sans KR', sans-serif;" data-category="여행">여행</button>
+            <button onclick="setActiveCategory('자연')" class="category-btn flex-shrink-0 px-6 py-2 rounded-full transition-all duration-300 cursor-pointer bg-[#F9F6F1] text-[#8B7355] hover:bg-[#F0EBE3]" style="font-family: 'Noto Sans KR', sans-serif;" data-category="자연">자연</button>
         </div>
-
-        <!-- 검색 아이콘 (모바일) -->
-        <button class="search-icon-btn mobile-only" onclick="openSearchModal()">
-            🔍
-        </button>
-
-        <!-- 사용자 메뉴 -->
-        <div class="user-menu">
-            <span class="username" th:text="${username}">사용자</span>
-            <a th:href="@{/templates/user/mypage}" class="btn-mypage">마이페이지</a>
-            <form th:action="@{/templates/user/logout}" method="post" style="display: inline;">
-                <button type="submit" class="btn-logout">로그아웃</button>
-            </form>
-        </div>
-    </div>
-</header>
-
-<!-- 카테고리 메뉴 -->
-<nav class="category-nav">
-    <div class="category-container">
-        <a th:href="@{/(category='전체')}" class="category-item active">전체</a>
-        <a th:href="@{/(category='디자인')}" class="category-item">디자인</a>
-        <a th:href="@{/(category='사진')}" class="category-item">사진</a>
-        <a th:href="@{/(category='일러스트')}" class="category-item">일러스트</a>
-        <a th:href="@{/(category='라이프스타일')}" class="category-item">라이프스타일</a>
-        <a th:href="@{/(category='여행')}" class="category-item">여행</a>
-        <a th:href="@{/(category='음식')}" class="category-item">음식</a>
-        <a th:href="@{/(category='패션')}" class="category-item">패션</a>
-    </div>
-</nav>
-
-<!-- 소개 섹션 -->
-<section class="intro-section">
-    <div class="intro-container">
-        <h2>일상 속 영감을 저장하는 공간</h2>
-        <p>당신의 감성을 담아보세요</p>
-    </div>
-</section>
-
-<!-- Masonry 레이아웃 -->
-<main class="main-content">
-    <div class="masonry-grid" id="masonry-grid">
-        <div class="masonry-item" th:each="post : ${posts}">
-            <a th:href="@{/posts/view/{id}(id=${post.id})}" class="post-card">
-                <div class="post-image" th:if="${!post.images.isEmpty()}">
-                    <img th:src="@{${post.images[0]}}" th:alt="${post.title}">
-                </div>
-                <div class="post-info">
-                    <h3 class="post-title" th:text="${post.title}">제목</h3>
-                    <p class="post-description" th:text="${post.description}">설명</p>
-                    <div class="post-meta">
-                        <span class="post-category" th:text="${post.category}">카테고리</span>
-                        <span class="post-author" th:text="${post.author.username}">작성자</span>
-                    </div>
-                </div>
-            </a>
-        </div>
-    </div>
-
-    <!-- 데이터가 없을 때 -->
-    <div class="no-data" th:if="${posts.isEmpty()}">
-        <p>아직 게시물이 없습니다.</p>
-    </div>
-</main>
-
-<!-- 등록 버튼 -->
-<a th:href="@{/posts/create}" class="floating-add-btn">+</a>
-
-<!-- 모바일 검색 모달 -->
-<div id="searchModal" class="search-modal" style="display: none;">
-    <div class="search-modal-content">
-        <button class="close-modal" onclick="closeSearchModal()">&times;</button>
-        <form th:action="@{/search}" method="get">
-            <select name="type" class="search-type-modal">
-                <option value="내용">내용으로 검색</option>
-                <option value="제목">제목으로 검색</option>
-                <option value="작성자">작성자로 검색</option>
-                <option value="카테고리">카테고리로 검색</option>
-            </select>
-            <input type="text" name="keyword" placeholder="검색어를 입력하세요" class="search-input-modal" required>
-            <button type="submit" class="search-btn-modal">검색</button>
-        </form>
     </div>
 </div>
 
-<script th:src="@{/js/main.js}"></script>
+<div class="bg-gradient-to-b from-[#F9F6F1] to-white border-b border-[#E8D5C4]/30 relative">
+    <div class="max-w-[1800px] mx-auto px-6 py-16 text-center">
+        <h2 class="text-[#8B7355] mb-4" style="font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 600;">
+            당신만의 영감을 기록하고 공유하세요
+        </h2>
+        <p class="text-[#A89080] max-w-2xl mx-auto" style="font-family: 'Noto Sans KR', sans-serif; font-size: 1.125rem; line-height: 1.8;">
+            일상 속 작은 순간들부터 특별한 영감까지,<br />
+            나의 영감 저장소에서 아름다운 기록을 시작하세요
+        </p>
+    </div>
+    <div class="absolute bottom-0 left-0 right-0 h-20 overflow-hidden">
+        <svg viewBox="0 0 1800 80" class="w-full h-full" preserveAspectRatio="none" style="display: block;">
+            <path d="M 0,80 Q 900,0 1800,80 L 1800,80 L 0,80 Z" fill="white" />
+        </svg>
+    </div>
+</div>
+
+<main class="max-w-[1800px] mx-auto px-6 py-12">
+    <div id="masonryGrid" class="masonry-grid">
+
+        <div th:if="${posts != null and !posts.isEmpty()}" th:each="post : ${posts}"
+             th:onclick="|navigateToView(${post.id})|"
+             class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl"
+             style="background-color: #F9F6F1;">
+            <img
+                    th:src="${post.imageUrl}"
+                    th:alt="${post.title}"
+                    class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
+                    style="display: block;"
+                    onerror="this.src='https://picsum.photos/400/600'"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="text-white" style="font-family: 'Noto Sans KR', sans-serif; font-weight: 600;" th:text="${post.title}"></h3>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${posts == null or posts.isEmpty()}">
+            <div onclick="navigateToView(1)" class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl" style="background-color: #F9F6F1;">
+                <img src="https://picsum.photos/seed/vintage/400/600" alt="빈티지 감성" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" style="display: block;" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div class="absolute bottom-0 left-0 right-0 p-4"><h3 class="text-white" style="font-family: 'Noto Sans KR', sans-serif; font-weight: 600;">빈티지 감성</h3></div>
+                </div>
+            </div>
+
+            <div onclick="navigateToView(2)" class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl" style="background-color: #F9F6F1;">
+                <img src="https://picsum.photos/seed/minimal/400/500" alt="미니멀 인테리어" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" style="display: block;" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div class="absolute bottom-0 left-0 right-0 p-4"><h3 class="text-white" style="font-family: 'Noto Sans KR', sans-serif; font-weight: 600;">미니멀 인테리어</h3></div>
+                </div>
+            </div>
+
+            <div onclick="navigateToView(3)" class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl" style="background-color: #F9F6F1;">
+                <img src="https://picsum.photos/seed/nature/400/400" alt="자연의 평화" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" style="display: block;" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div class="absolute bottom-0 left-0 right-0 p-4"><h3 class="text-white" style="font-family: 'Noto Sans KR', sans-serif; font-weight: 600;">자연의 평화</h3></div>
+                </div>
+            </div>
+
+            <div onclick="navigateToView(4)" class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl" style="background-color: #F9F6F1;">
+                <img src="https://picsum.photos/seed/art/400/550" alt="모던 아트" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" style="display: block;" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div class="absolute bottom-0 left-0 right-0 p-4"><h3 class="text-white" style="font-family: 'Noto Sans KR', sans-serif; font-weight: 600;">모던 아트</h3></div>
+                </div>
+            </div>
+
+            <div onclick="navigateToView(5)" class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl" style="background-color: #F9F6F1;">
+                <img src="https://picsum.photos/seed/cafe/400/450" alt="카페 분위기" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" style="display: block;" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div class="absolute bottom-0 left-0 right-0 p-4"><h3 class="text-white" style="font-family: 'Noto Sans KR', sans-serif; font-weight: 600;">카페 분위기</h3></div>
+                </div>
+            </div>
+
+            <div onclick="navigateToView(6)" class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl" style="background-color: #F9F6F1;">
+                <img src="https://picsum.photos/seed/food/400/600" alt="음식의 예술" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" style="display: block;" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div class="absolute bottom-0 left-0 right-0 p-4"><h3 class="text-white" style="font-family: 'Noto Sans KR', sans-serif; font-weight: 600;">음식의 예술</h3></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="loadingIndicator" class="hidden flex justify-center items-center py-12">
+        <div class="w-8 h-8 border-4 border-[#E8D5C4] border-t-[#D4C4B0] rounded-full animate-spin"></div>
+    </div>
+</main>
+
+<div class="fixed bottom-8 right-8 z-50 group">
+    <button onclick="navigateToCreate()" class="w-[100px] h-[100px] bg-[#D4C4B0] text-white rounded-full shadow-2xl hover:bg-[#C9B5A0] hover:scale-110 transition-all duration-300 flex items-center justify-center cursor-pointer" aria-label="Add new inspiration">
+        <svg class="w-10 h-10 group-hover:rotate-90 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+    </button>
+    <div class="absolute bottom-full mb-4 left-1/2 -translate-x-1/2 px-4 py-2 bg-[#8B7355] text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap" style="font-family: 'Noto Sans KR', sans-serif; font-size: 0.875rem;">
+        글쓰기
+    </div>
+</div>
+
+<div th:replace="~{layout/header :: searchModal}"></div>
+
+<script th:replace="~{layout/header :: commonScript}"></script>
+
+<script th:inline="none">
+    // 전역 변수 선언
+    let currentPage = 1;
+    let isLoading = false;
+    let hasMore = true;
+    let activeCategory = '전체';
+
+    // 카테고리 변경
+    function setActiveCategory(category) {
+        activeCategory = category;
+
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.classList.remove('bg-[#D4C4B0]', 'text-white');
+            btn.classList.add('bg-[#F9F6F1]', 'text-[#8B7355]', 'hover:bg-[#F0EBE3]');
+        });
+
+        const selectedBtn = document.querySelector(`.category-btn[data-category="${category}"]`);
+        if (selectedBtn) {
+            selectedBtn.classList.remove('bg-[#F9F6F1]', 'text-[#8B7355]', 'hover:bg-[#F0EBE3]');
+            selectedBtn.classList.add('bg-[#D4C4B0]', 'text-white');
+        }
+
+        console.log('선택된 카테고리:', category);
+        loadPostsByCategory(category);
+    }
+
+    // 카테고리별 게시물 로드
+    function loadPostsByCategory(category) {
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const masonryGrid = document.getElementById('masonryGrid');
+
+        if (loadingIndicator) loadingIndicator.classList.remove('hidden');
+
+        axios.get('/api/posts', {
+            params: {
+                category: category !== '전체' ? category : null
+            }
+        })
+            .then(response => {
+                console.log('게시물 로드 성공:', response.data);
+                renderPosts(response.data);
+            })
+            .catch(error => {
+                console.error('게시물 로드 오류:', error);
+            })
+            .finally(() => {
+                if (loadingIndicator) loadingIndicator.classList.add('hidden');
+            });
+    }
+
+    // 게시물 렌더링
+    function renderPosts(posts) {
+        const masonryGrid = document.getElementById('masonryGrid');
+        if (!masonryGrid) return;
+
+        if (!posts || posts.length === 0) {
+            masonryGrid.innerHTML = '<p class="text-center text-[#A89080] py-12" style="font-family: \'Noto Sans KR\', sans-serif;">게시물이 없습니다.</p>';
+            return;
+        }
+
+        masonryGrid.innerHTML = posts.map(post => `
+                <div
+                    onclick="navigateToView(${post.id})"
+                    class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl"
+                    style="background-color: #F9F6F1;">
+                    <img
+                        src="${post.imageUrl}"
+                        alt="${post.title}"
+                        class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
+                        style="display: block;"
+                        onerror="this.src='https://picsum.photos/400/600'"
+                    />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div class="absolute bottom-0 left-0 right-0 p-4">
+                            <h3 class="text-white" style="font-family: 'Noto Sans KR', sans-serif; font-weight: 600;">
+                                ${post.title}
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+    }
+
+    function loadMorePosts() {
+        if (isLoading || !hasMore) return;
+
+        isLoading = true;
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        if (loadingIndicator) loadingIndicator.classList.remove('hidden');
+
+        axios.get('/api/posts', {
+            params: {
+                page: currentPage + 1,
+                category: activeCategory !== '전체' ? activeCategory : null
+            }
+        })
+            .then(response => {
+                const posts = response.data.content || response.data;
+
+                if (posts.length === 0) {
+                    hasMore = false;
+                } else {
+                    currentPage++;
+                    appendPosts(posts);
+                }
+            })
+            .catch(error => {
+                console.error('추가 게시물 로드 오류:', error);
+            })
+            .finally(() => {
+                isLoading = false;
+                if (loadingIndicator) loadingIndicator.classList.add('hidden');
+            });
+    }
+
+    function appendPosts(posts) {
+        const masonryGrid = document.getElementById('masonryGrid');
+        if (!masonryGrid) return;
+
+        const postsHTML = posts.map(post => `
+                <div
+                    onclick="navigateToView(${post.id})"
+                    class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl"
+                    style="background-color: #F9F6F1;">
+                    <img
+                        src="${post.imageUrl}"
+                        alt="${post.title}"
+                        class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
+                        style="display: block;"
+                        onerror="this.src='https://picsum.photos/400/600'"
+                    />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div class="absolute bottom-0 left-0 right-0 p-4">
+                            <h3 class="text-white" style="font-family: 'Noto Sans KR', sans-serif; font-weight: 600;">
+                                ${post.title}
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+        masonryGrid.insertAdjacentHTML('beforeend', postsHTML);
+    }
+
+    window.addEventListener('scroll', function() {
+        const scrollPosition = window.innerHeight + window.scrollY;
+        const threshold = document.body.offsetHeight - 500;
+
+        if (scrollPosition >= threshold) {
+            loadMorePosts();
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('메인 페이지 로드 완료');
+    });
+</script>
 </body>
 </html>

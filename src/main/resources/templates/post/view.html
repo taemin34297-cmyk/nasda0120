@@ -1,92 +1,332 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{layout/header :: header}"></head>
-<body>
-<header class="main-header">
-    <div class="header-container">
-        <h1 class="logo"><a th:href="@{/static}">나의 영감 저장소</a></h1>
-        <div class="user-menu" sec:authorize="isAuthenticated()">
-            <span class="username" th:text="${username}">사용자</span>
-            <a th:href="@{/templates/user/mypage}" class="btn-mypage">마이페이지</a>
-        </div>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="~{layout/header :: head}"></head>
+
+<body class="min-h-screen bg-white">
+<div th:replace="~{layout/header :: header}"></div>
+<div data-post-id="" th:data-post-id="${post.id}"></div>
+
+<main class="view-container">
+    <div class="view-header">
+        <button onclick="window.location.href='/'" class="btn-back-inline">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            목록으로
+        </button>
     </div>
-</header>
 
-<main class="view-page">
-    <div class="view-container">
-        <!-- 헤더 -->
-        <div class="view-header">
-            <button onclick="history.back()" class="btn-back">← 뒤로가기</button>
+    <div class="post-layout-grid">
 
-            <div class="view-actions" >
-                <a th:href="@{/templates/post/edit/{id}(id=${post.id})}" class="btn-edit">수정</a>
-                <form th:action="@{/templates/post/delete/{id}(id=${post.id})}" method="post"
-                      onsubmit="return confirm('정말 삭제하시겠습니까?')" style="display: inline;">
-                    <button type="submit" class="btn-delete">삭제</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- 제목 -->
-        <h2 class="post-title" th:text="${post.title}">제목</h2>
-
-        <!-- 카테고리 -->
-        <p class="post-category-label">카테고리: <span th:text="${post.category}">카테고리</span></p>
-
-        <!-- 메타 정보 -->
-        <div class="post-meta-info">
-            <span class="post-author">작성자: <strong th:text="${post.author.username}">작성자</strong></span>
-            <span class="post-date" th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">2024-01-01</span>
-        </div>
-
-        <!-- 이미지 -->
-        <div class="post-images">
-            <div class="image-item" th:each="imageUrl : ${post.images}">
-                <img th:src="@{${imageUrl}}" alt="게시물 이미지">
-            </div>
-        </div>
-
-        <!-- 설명 -->
-        <div class="post-description">
-            <p th:text="${post.description}">설명</p>
-        </div>
-
-        <!-- 댓글 섹션 -->
-        <div class="comments-section">
-            <h3>댓글 <span th:text="${commentCount}">0</span></h3>
-
-            <!-- 댓글 작성 (로그인 시) -->
-            <div  class="comment-form">
-                <form th:action="@{/comment/create}" method="post">
-                    <input type="hidden" name="postId" th:value="${post.id}">
-                    <textarea name="text" placeholder="댓글을 입력하세요" required rows="3"></textarea>
-                    <button type="submit" class="btn-comment-submit">댓글 작성</button>
-                </form>
-            </div>
-
-            <!-- 댓글 목록 -->
-            <div class="comments-list">
-                <div class="comment-item" th:each="comment : ${post.comments}">
-                    <div class="comment-header">
-                        <span class="comment-author" th:text="${comment.author.username}">작성자</span>
-                        <span class="comment-date" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}">날짜</span>
+        <article class="post-detail">
+            <div class="post-detail-header">
+                <div>
+                    <div class="post-category-badge" th:text="${post.category}">카테고리</div>
+                    <h1 class="post-detail-title" th:text="${post.title}">게시물 제목</h1>
+                </div>
+                <div class="post-meta-info">
+                    <div class="post-author-info">
+                        <div class="author-avatar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="author-name" th:text="${post.author.username}">작성자</span>
+                            <span class="post-date" th:text="${#temporals.format(post.createdAt, 'yyyy.MM.dd HH:mm')}">2024.01.01</span>
+                        </div>
                     </div>
-                    <p class="comment-text" th:text="${comment.text}">댓글 내용</p>
-
-                    <!-- 댓글 삭제 (본인 or 관리자) -->
-                    <div th:if="${username != null && (username == comment.author.username)}">
-                        <form th:action="@{/comment/delete/{id}(id=${comment.id})}" method="post"
-                              onsubmit="return confirm('댓글을 삭제하시겠습니까?')">
-                            <input type="hidden" name="postId" th:value="${post.id}">
-                            <button type="submit" class="btn-comment-delete">삭제</button>
-                        </form>
+                    <div th:if="${post.isOwner}" class="post-actions">
+                        <a th:href="@{/posts/edit/{id}(id=${post.id})}" class="btn-action btn-edit">수정</a>
+                        <button onclick="deletePost([[${post.id}]])" class="btn-action btn-delete">삭제</button>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <div th:if="${!post.images.isEmpty()}" class="post-images">
+                <div id="sticker-canvas" class="sticker-canvas relative rounded-2xl overflow-hidden bg-[#F9F6F1]">
+                    <img th:src="@{${post.images[0]}}" th:alt="${post.title}" class="post-image select-none w-full h-auto block">
+                    <div id="sticker-layer" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+                </div>
+
+                <th:block th:each="image, iter : ${post.images}">
+                    <div th:unless="${iter.first}" class="post-image-item mt-4">
+                        <img th:src="@{${image}}" th:alt="${post.title}" class="post-image w-full h-auto block rounded-2xl">
+                    </div>
+                </th:block>
+            </div>
+
+            <div class="post-content">
+                <p th:text="${post.content}" style="white-space: pre-wrap;">게시물 내용</p>
+            </div>
+        </article>
+
+        <aside class="comments-section">
+            <div class="comments-sticky-wrapper">
+
+                <div class="decoration-panel mb-8 p-6 bg-[#F9F6F1] rounded-2xl">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="text-xl">✨</span>
+                        <h3 class="text-[#8B7355] font-serif text-lg font-bold">꾸미기</h3>
+                    </div>
+
+                    <div id="deco-start-view">
+                        <button onclick="startDecoration()" class="w-full py-3 bg-[#D4C4B0] text-white rounded-xl hover:bg-[#C9B5A0] transition-all font-medium cursor-pointer">
+                            꾸미기 시작
+                        </button>
+                    </div>
+
+                    <div id="deco-active-view" class="hidden space-y-4">
+                        <p class="text-xs text-[#8B7355]">스티커를 드래그하여 이미지에 놓아보세요!</p>
+
+                        <div class="grid grid-cols-5 gap-2 bg-white p-3 rounded-xl" id="sticker-palette">
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button onclick="saveDecoration()" class="flex-1 py-2 bg-[#8B7355] text-white rounded-lg hover:bg-[#A89080] text-sm cursor-pointer">저장</button>
+                            <button onclick="cancelDecoration()" class="flex-1 py-2 bg-[#E8D5C4] text-[#8B7355] rounded-lg hover:bg-[#D4C4B0] text-sm cursor-pointer">취소</button>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="comments-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span id="comment-count-text">댓글 0개</span>
+                </h2>
+
+                <form id="comment-form" class="comment-form" th:data-post-id="${post.id}">
+                    <textarea id="comment-content" placeholder="따뜻한 댓글을 남겨주세요..." class="comment-textarea" maxlength="500"></textarea>
+                    <div class="comment-form-footer">
+                        <span id="comment-char-count" class="char-count">0/500</span>
+                        <button type="submit" class="btn-submit-comment">등록</button>
+                    </div>
+                </form>
+
+                <div id="comments-list" class="comments-list"></div>
+            </div>
+        </aside>
     </div>
 </main>
 
+<style>
+    /* Layout */
+    .view-container { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .view-header { margin-bottom: 2rem; }
+
+    .post-layout-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+    @media (min-width: 1024px) {
+        .post-layout-grid { grid-template-columns: 7fr 3fr; align-items: start; }
+        .comments-sticky-wrapper { position: sticky; top: 90px; max-height: calc(100vh - 100px); overflow-y: auto; scrollbar-width: none; }
+    }
+
+    /* Sticker Styles */
+    .sticker-canvas { position: relative; width: 100%; display: block; }
+    .sticker-item {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        font-size: 2.5rem;
+        cursor: grab;
+        user-select: none;
+        pointer-events: auto;
+        transition: transform 0.2s;
+    }
+    .sticker-item:hover { transform: translate(-50%, -50%) scale(1.2); z-index: 10; }
+
+    .sticker-remove-btn {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        width: 18px;
+        height: 18px;
+        background-color: #EF5350;
+        color: white;
+        border-radius: 50%;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        cursor: pointer;
+    }
+    .sticker-item:hover .sticker-remove-btn { display: flex; }
+
+    .palette-item {
+        font-size: 1.5rem;
+        text-align: center;
+        padding: 0.5rem;
+        cursor: grab;
+        border-radius: 0.5rem;
+        transition: background-color 0.2s;
+    }
+    .palette-item:hover { background-color: #F9F6F1; transform: scale(1.1); }
+    .palette-item:active { cursor: grabbing; }
+
+    /* Basic Elements */
+    .btn-back-inline { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background-color: #F9F6F1; border: 1px solid #E8D5C4; border-radius: 9999px; color: #8B7355; cursor: pointer; transition: 0.3s; }
+    .btn-back-inline:hover { background-color: #F0EBE3; border-color: #D4C4B0; }
+
+    .post-detail { background-color: white; border-radius: 1.5rem; padding: 2.5rem; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1); }
+    .post-detail-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid #E8D5C4; }
+    .post-category-badge { display: inline-block; padding: 0.25rem 0.75rem; background-color: #F9F6F1; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; color: #8B7355; margin-bottom: 0.75rem; }
+    .post-detail-title { font-family: 'Playfair Display', serif; font-size: 2.25rem; font-weight: 600; color: #8B7355; line-height: 1.3; margin-bottom: 1rem; }
+
+    .post-meta-info { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .post-author-info { display: flex; align-items: center; gap: 0.75rem; }
+    .author-avatar { width: 2.5rem; height: 2.5rem; background-color: #D4C4B0; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; }
+    .author-name { font-family: 'Noto Sans KR', sans-serif; font-size: 0.875rem; font-weight: 600; color: #8B7355; display: block; }
+    .post-date { font-family: 'Noto Sans KR', sans-serif; font-size: 0.75rem; color: #A89080; display: block; }
+
+    .post-actions { display: flex; gap: 0.5rem; }
+    .btn-action { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid #E8D5C4; border-radius: 9999px; font-family: 'Noto Sans KR', sans-serif; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: 0.3s; text-decoration: none; }
+    .btn-edit { background-color: white; color: #8B7355; }
+    .btn-delete { background-color: white; color: #DC2626; }
+
+    .post-content { font-family: 'Noto Sans KR', sans-serif; font-size: 1.05rem; color: #5A4D41; line-height: 1.9; }
+
+    .comments-section { margin-top: 0; background-color: white; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1); height: fit-content; }
+    .comments-title { display: flex; align-items: center; gap: 0.5rem; font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 600; color: #8B7355; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #F0EBE3; }
+
+    .comment-form { background-color: #F9F6F1; border-radius: 1rem; padding: 1rem; margin-bottom: 1.5rem; }
+    .comment-textarea { width: 100%; min-height: 80px; padding: 0.75rem; background-color: white; border: 1px solid #E8D5C4; border-radius: 0.5rem; font-family: 'Noto Sans KR', sans-serif; font-size: 0.875rem; color: #8B7355; resize: vertical; transition: 0.3s; }
+    .comment-textarea:focus { outline: none; border-color: #D4C4B0; box-shadow: 0 0 0 3px rgba(212, 196, 176, 0.1); }
+    .comment-form-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; }
+    .char-count { font-family: 'Noto Sans KR', sans-serif; font-size: 0.75rem; color: #A89080; }
+    .btn-submit-comment { padding: 0.375rem 1rem; background-color: #D4C4B0; border: none; border-radius: 9999px; font-family: 'Noto Sans KR', sans-serif; font-size: 0.8rem; font-weight: 500; color: white; cursor: pointer; transition: 0.3s; }
+    .btn-submit-comment:hover { background-color: #C9B5A0; }
+
+    .comments-list { display: flex; flex-direction: column; gap: 1rem; }
+    .no-comments { text-align: center; padding: 2rem 1rem; color: #A89080; font-size: 0.875rem; }
+    @media (max-width: 1023px) { .comments-section { background-color: transparent; box-shadow: none; padding: 0; border-top: 1px solid #E8D5C4; padding-top: 2rem; border-radius: 0; } }
+</style>
+
+<link rel="stylesheet" th:href="@{/css/style.css}">
+<script th:src="@{/js/main.js}"></script>
 <script th:src="@{/js/comment.js}"></script>
+<script th:src="@{/js/post.js}"></script>
+
+<script th:inline="none">
+    const availableStickers = [
+        '❤️', '⭐', '✨', '🌟', '💖', '🌈', '🌸', '🌺', '🌻', '🌼',
+        '🦋', '🎀', '💕', '💝', '🎉', '🎊', '🌙', '☀️', '🌞', '🔥'
+    ];
+
+    let stickers = [];
+    let isDecorating = false;
+
+    // DOM Elements
+    const decoStartView = document.getElementById('deco-start-view');
+    const decoActiveView = document.getElementById('deco-active-view');
+    const stickerLayer = document.getElementById('sticker-layer');
+    const stickerCanvas = document.getElementById('sticker-canvas');
+    const stickerPalette = document.getElementById('sticker-palette');
+
+    // 1. 초기화: 팔레트 생성
+    function initPalette() {
+        stickerPalette.innerHTML = '';
+        availableStickers.forEach(emoji => {
+            const div = document.createElement('div');
+            div.className = 'palette-item';
+            div.textContent = emoji;
+            div.draggable = true;
+            div.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('emoji', emoji);
+                e.dataTransfer.effectAllowed = 'copy';
+            });
+            stickerPalette.appendChild(div);
+        });
+    }
+
+    // 2. 모드 전환
+    function startDecoration() {
+        isDecorating = true;
+        decoStartView.classList.add('hidden');
+        decoActiveView.classList.remove('hidden');
+        stickerLayer.classList.remove('pointer-events-none');
+        initPalette();
+    }
+
+    function cancelDecoration() {
+        if (confirm('작성 중인 내용이 사라집니다. 취소하시겠습니까?')) {
+            isDecorating = false;
+            stickers = [];
+            renderStickers();
+            decoStartView.classList.remove('hidden');
+            decoActiveView.classList.add('hidden');
+            stickerLayer.classList.add('pointer-events-none');
+        }
+    }
+
+    function saveDecoration() {
+        console.log('저장된 스티커:', stickers);
+        alert('꾸미기가 저장되었습니다!');
+        isDecorating = false;
+        decoStartView.classList.remove('hidden');
+        decoActiveView.classList.add('hidden');
+        stickerLayer.classList.add('pointer-events-none');
+    }
+
+    // 3. 드롭 존 (캔버스)
+    if (stickerCanvas) {
+        stickerCanvas.addEventListener('dragover', (e) => {
+            if (!isDecorating) return;
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'copy';
+        });
+
+        stickerCanvas.addEventListener('drop', (e) => {
+            if (!isDecorating) return;
+            e.preventDefault();
+            const emoji = e.dataTransfer.getData('emoji');
+
+            if (emoji) {
+                const rect = stickerCanvas.getBoundingClientRect();
+                // 이미지 크기 대비 좌표 (%) 계산
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                addSticker(emoji, x, y);
+            }
+        });
+    }
+
+    function addSticker(emoji, x, y) {
+        stickers.push({
+            id: Date.now() + Math.random(),
+            emoji, x, y
+        });
+        renderStickers();
+    }
+
+    function removeSticker(id) {
+        stickers = stickers.filter(s => s.id !== id);
+        renderStickers();
+    }
+
+    function renderStickers() {
+        stickerLayer.innerHTML = '';
+        stickers.forEach(sticker => {
+            const el = document.createElement('div');
+            el.className = 'sticker-item group';
+            el.style.left = sticker.x + '%';
+            el.style.top = sticker.y + '%';
+
+            // X 버튼은 isDecorating일 때만 보임 (CSS로 제어하거나 여기서 조건부 렌더링)
+            el.innerHTML = `
+                <span>${sticker.emoji}</span>
+                ${isDecorating ? `<div class="sticker-remove-btn">×</div>` : ''}
+            `;
+
+            if (isDecorating) {
+                el.querySelector('.sticker-remove-btn').onclick = (e) => {
+                    e.stopPropagation();
+                    removeSticker(sticker.id);
+                };
+            }
+            stickerLayer.appendChild(el);
+        });
+    }
+</script>
 </body>
 </html>
