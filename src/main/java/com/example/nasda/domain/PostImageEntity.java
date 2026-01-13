@@ -1,7 +1,7 @@
 package com.example.nasda.domain;
 
 import jakarta.persistence.*;
-import lombok.*;
+        import lombok.*;
 
 @Entity
 @Table(name = "post_images")
@@ -21,6 +21,7 @@ public class PostImageEntity {
     @Column(nullable = false)
     private String imageUrl;
 
+    @Column(name = "sort_order", nullable = false)
     private Integer sortOrder;
 
     @Builder.Default

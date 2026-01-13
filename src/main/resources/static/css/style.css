@@ -131,9 +131,10 @@ body {
     transition: all var(--transition-base);
 }
 
-.search-type:focus {
-    ring: 2px;
-    ring-color: var(--color-brown-hover);
+.search-type:focus,
+.search-input:focus {
+    outline: 2px solid var(--color-brown-hover);
+    outline-offset: 2px;
 }
 
 .search-input {
@@ -751,4 +752,303 @@ html {
         break-inside: avoid;
         page-break-inside: avoid;
     }
+}
+
+/* ========================================
+   Comments (Post View) - Actions UI
+======================================== */
+
+/* ✅ 여기(위 블록)에 sticky를 추가한 것 */
+.comments-sticky-wrapper {
+    position: sticky;
+    top: calc(var(--header-height) + 24px);
+}
+
+.comments-list .comment-item {
+    margin-top: 1rem;
+}
+
+.comment-card {
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1rem;
+}
+
+.comment-text {
+    color: var(--color-brown);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.comment-bottom-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+.comment-left-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-brown-light);
+    font-size: 0.75rem;
+}
+
+.comment-author {
+    font-weight: 600;
+    color: var(--color-brown);
+}
+
+.comment-actions {
+    margin-left: auto;              /* ✅ 오른쪽 정렬 */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.inline-form {
+    display: inline;
+}
+
+.icon-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.95rem;
+    padding: 0.35rem 0.4rem;
+    border-radius: 0.5rem;
+    opacity: 0.85;
+    transition: transform var(--transition-fast), background-color var(--transition-fast), opacity var(--transition-fast);
+}
+
+.icon-btn:hover {
+    opacity: 1;
+    transform: translateY(-1px);
+    background-color: var(--color-bg-secondary);
+}
+
+.hidden {
+    display: none;
+}
+
+/* Edit box */
+.comment-edit-box {
+    margin-top: 0.75rem;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 0.75rem;
+}
+
+.comment-edit-textarea {
+    width: 100%;
+    min-height: 90px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 0.75rem;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    color: var(--color-brown);
+    resize: vertical;
+    outline: none;
+}
+
+.comment-edit-textarea:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.comment-edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.comment-edit-actions button {
+    border: none;
+    border-radius: var(--radius-full);
+    padding: 0.5rem 0.9rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.btn-edit-save {
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.btn-edit-save:hover {
+    background: var(--color-brown-hover);
+}
+
+.btn-edit-cancel {
+    background: var(--color-border);
+    color: var(--color-brown);
+}
+
+.btn-edit-cancel:hover {
+    background: var(--color-bg-tertiary);
+}
+
+.comment-pagination{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    margin-top:14px;
+}
+
+.btn-page{
+    padding: 0.45rem 0.9rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    background: var(--color-bg-secondary);
+    color: var(--color-brown);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: background-color var(--transition-base);
+}
+
+.btn-page:hover{
+    background: var(--color-bg-tertiary);
+}
+
+.page-info{
+    font-size: 0.85rem;
+    color: var(--color-brown-light);
+    font-weight: 700;
+}
+
+/* 페이지 번호 버튼 */
+.page-number {
+    min-width: 34px;
+    text-align: center;
+}
+
+/* 현재 페이지 */
+.page-number.active {
+    background-color: var(--color-primary);
+    color: #fff;
+    border-color: var(--color-primary);
+    pointer-events: none;
+}
+
+
+/* 혹시 다른 곳에서 post-images에 overflow를 걸어도 슬라이더는 살아야 함 */
+.post-images { overflow: visible !important; }
+
+
+/* ===============================
+   Swiper (Post Images) - single slider
+================================ */
+.post-images { overflow: visible; }
+
+.postImagesSwiper {
+    width: 100%;
+    max-width: 920px;
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--color-bg-secondary);
+}
+
+/* ✅ 높이 지정: 없으면 0처럼 보이는 경우가 있음 */
+.postImagesSwiper {
+    height: 520px;
+}
+
+@media (max-width: 768px) {
+    .postImagesSwiper { height: 320px; }
+}
+
+/* 슬라이드 / 이미지 */
+.postImagesSwiper .swiper-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.postImagesSwiper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 꽉 채우기(일부 잘림). 전체 보이게 하려면 contain */
+    display: block;
+}
+
+/* 버튼 색(안 보일 때 대비) */
+.postImagesSwiper .swiper-button-prev,
+.postImagesSwiper .swiper-button-next {
+    color: #fff;
+}
+
+/* ===============================
+   Swiper (Post Images) - single slider
+================================ */
+
+.post-images { overflow: visible; }
+
+.postImagesSwiper {
+    width: 100%;
+    max-width: 920px;
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--color-bg-secondary);
+    height: 520px;              /* PC 높이 */
+}
+
+@media (max-width: 768px) {
+    .postImagesSwiper { height: 320px; }   /* 모바일 높이 */
+}
+
+/* 슬라이드 내부 정렬 */
+.postImagesSwiper .swiper-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 2번째~ 일반 이미지 */
+.postImagesSwiper img.post-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* ✅ 첫 슬라이드(스티커 캔버스)가 swiper 높이를 그대로 따라가게 */
+#sticker-canvas {
+    width: 100%;
+    height: 100%;
+}
+
+#sticker-canvas img.post-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* 버튼 색 (배경 따라 안 보이면) */
+.postImagesSwiper .swiper-button-prev,
+.postImagesSwiper .swiper-button-next {
+    color: #fff;
+}
+
+/* 페이지네이션 위치 살짝 */
+.postImagesSwiper .swiper-pagination {
+    bottom: 10px !important;
+}
+
+.post-image img{
+    width: 100%;
+    height: 220px;      /* 원하는 높이 */
+    object-fit: cover;
+    display: block;
 }

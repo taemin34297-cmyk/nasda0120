@@ -13,14 +13,12 @@ let isLoading = false;
 // ========================================
 // 2. 모바일 검색 모달
 // ========================================
-function openSearchModal() {
+function openSearchModalLegacy() {
     const modal = document.getElementById('searchModal');
     if (modal) {
         modal.style.display = 'flex';
-        // 모달 열릴 때 body 스크롤 방지
         document.body.style.overflow = 'hidden';
 
-        // 검색 입력란에 자동 포커스
         const input = modal.querySelector('.search-input-modal');
         if (input) {
             setTimeout(() => input.focus(), 100);
@@ -28,11 +26,10 @@ function openSearchModal() {
     }
 }
 
-function closeSearchModal() {
+function closeSearchModalLegacy() {
     const modal = document.getElementById('searchModal');
     if (modal) {
         modal.style.display = 'none';
-        // body 스크롤 복원
         document.body.style.overflow = '';
     }
 }
@@ -60,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // 3. Masonry Grid 레이아웃 최적화
 // ========================================
 function initMasonryLayout() {
-    const grid = document.getElementById('masonry-grid');
+    const grid = document.getElementById('masonryGrid');
     if (!grid) return;
 
     // 이미지 로드 완료 후 레이아웃 재계산
@@ -149,7 +146,7 @@ function loadMorePosts() {
 }
 
 function appendPosts(posts) {
-    const grid = document.getElementById('masonry-grid');
+    const grid = document.getElementById('masonryGrid');
     if (!grid) return;
 
     posts.forEach(post => {
@@ -172,7 +169,7 @@ function createPostElement(post) {
         : '';
 
     div.innerHTML = `
-        <a href="/posts/view/${post.id}" class="post-card">
+    <a href="/posts/${post.id}" class="post-card">
             ${imageHtml}
             <div class="post-info">
                 <h3 class="post-title">${post.title}</h3>
@@ -481,8 +478,8 @@ window.addEventListener('unhandledrejection', function(e) {
 // ========================================
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
-        openSearchModal,
-        closeSearchModal,
+        openSearchModalLegacy,
+        closeSearchModalLegacy,
         filterByCategory,
         initMasonryLayout,
         scrollToTop

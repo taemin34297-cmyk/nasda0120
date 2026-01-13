@@ -46,4 +46,10 @@ public class PostEntity {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    public void update(CategoryEntity category, String title, String description) {
+        this.category = category;
+        this.title = title;
+        this.description = description;
+    }
 }

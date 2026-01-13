@@ -41,66 +41,51 @@
 <main class="max-w-[1800px] mx-auto px-6 py-12">
     <div id="masonryGrid" class="masonry-grid">
 
-        <div th:if="${posts != null and !posts.isEmpty()}" th:each="post : ${posts}"
-             th:onclick="|navigateToView(${post.id})|"
-             class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl"
-             style="background-color: #F9F6F1;">
+        <!-- ✅ posts가 있을 때 -->
+        <a th:if="${posts != null and !posts.isEmpty()}"
+           th:each="post : ${posts}"
+           th:href="@{/posts/{id}(id=${post.id})}"
+           class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl"
+           style="background-color: #F9F6F1; display:block;">
+
             <img
-                    th:src="${post.imageUrl}"
+                    th:src="@{${post.imageUrl}}"
                     th:alt="${post.title}"
                     class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
                     style="display: block;"
                     onerror="this.src='https://picsum.photos/400/600'"
             />
+
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div class="absolute bottom-0 left-0 right-0 p-4">
-                    <h3 class="text-white" style="font-family: 'Noto Sans KR', sans-serif; font-weight: 600;" th:text="${post.title}"></h3>
+                    <h3 class="text-white" style="font-family: 'Noto Sans KR', sans-serif; font-weight: 600;"
+                        th:text="${post.title}"></h3>
                 </div>
             </div>
-        </div>
+        </a>
 
+        <!-- ✅ posts가 비었을 때 (샘플 카드) -->
         <div th:if="${posts == null or posts.isEmpty()}">
-            <div onclick="navigateToView(1)" class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl" style="background-color: #F9F6F1;">
+            <a href="/posts/1" class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl" style="background-color: #F9F6F1; display:block;">
                 <img src="https://picsum.photos/seed/vintage/400/600" alt="빈티지 감성" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" style="display: block;" />
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div class="absolute bottom-0 left-0 right-0 p-4"><h3 class="text-white" style="font-family: 'Noto Sans KR', sans-serif; font-weight: 600;">빈티지 감성</h3></div>
                 </div>
-            </div>
+            </a>
 
-            <div onclick="navigateToView(2)" class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl" style="background-color: #F9F6F1;">
+            <a href="/posts/2" class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl" style="background-color: #F9F6F1; display:block;">
                 <img src="https://picsum.photos/seed/minimal/400/500" alt="미니멀 인테리어" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" style="display: block;" />
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div class="absolute bottom-0 left-0 right-0 p-4"><h3 class="text-white" style="font-family: 'Noto Sans KR', sans-serif; font-weight: 600;">미니멀 인테리어</h3></div>
                 </div>
-            </div>
+            </a>
 
-            <div onclick="navigateToView(3)" class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl" style="background-color: #F9F6F1;">
+            <a href="/posts/3" class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl" style="background-color: #F9F6F1; display:block;">
                 <img src="https://picsum.photos/seed/nature/400/400" alt="자연의 평화" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" style="display: block;" />
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div class="absolute bottom-0 left-0 right-0 p-4"><h3 class="text-white" style="font-family: 'Noto Sans KR', sans-serif; font-weight: 600;">자연의 평화</h3></div>
                 </div>
-            </div>
-
-            <div onclick="navigateToView(4)" class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl" style="background-color: #F9F6F1;">
-                <img src="https://picsum.photos/seed/art/400/550" alt="모던 아트" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" style="display: block;" />
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div class="absolute bottom-0 left-0 right-0 p-4"><h3 class="text-white" style="font-family: 'Noto Sans KR', sans-serif; font-weight: 600;">모던 아트</h3></div>
-                </div>
-            </div>
-
-            <div onclick="navigateToView(5)" class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl" style="background-color: #F9F6F1;">
-                <img src="https://picsum.photos/seed/cafe/400/450" alt="카페 분위기" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" style="display: block;" />
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div class="absolute bottom-0 left-0 right-0 p-4"><h3 class="text-white" style="font-family: 'Noto Sans KR', sans-serif; font-weight: 600;">카페 분위기</h3></div>
-                </div>
-            </div>
-
-            <div onclick="navigateToView(6)" class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl" style="background-color: #F9F6F1;">
-                <img src="https://picsum.photos/seed/food/400/600" alt="음식의 예술" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" style="display: block;" />
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div class="absolute bottom-0 left-0 right-0 p-4"><h3 class="text-white" style="font-family: 'Noto Sans KR', sans-serif; font-weight: 600;">음식의 예술</h3></div>
-                </div>
-            </div>
+            </a>
         </div>
     </div>
 
@@ -122,17 +107,14 @@
 </div>
 
 <div th:replace="~{layout/header :: searchModal}"></div>
-
 <script th:replace="~{layout/header :: commonScript}"></script>
 
 <script th:inline="none">
-    // 전역 변수 선언
     let currentPage = 1;
     let isLoading = false;
     let hasMore = true;
     let activeCategory = '전체';
 
-    // 카테고리 변경
     function setActiveCategory(category) {
         activeCategory = category;
 
@@ -147,35 +129,24 @@
             selectedBtn.classList.add('bg-[#D4C4B0]', 'text-white');
         }
 
-        console.log('선택된 카테고리:', category);
         loadPostsByCategory(category);
     }
 
-    // 카테고리별 게시물 로드
     function loadPostsByCategory(category) {
         const loadingIndicator = document.getElementById('loadingIndicator');
-        const masonryGrid = document.getElementById('masonryGrid');
-
         if (loadingIndicator) loadingIndicator.classList.remove('hidden');
 
         axios.get('/api/posts', {
-            params: {
-                category: category !== '전체' ? category : null
-            }
+            params: { category: category !== '전체' ? category : null }
         })
-            .then(response => {
-                console.log('게시물 로드 성공:', response.data);
-                renderPosts(response.data);
-            })
-            .catch(error => {
-                console.error('게시물 로드 오류:', error);
-            })
-            .finally(() => {
-                if (loadingIndicator) loadingIndicator.classList.add('hidden');
-            });
+        .then(response => renderPosts(response.data))
+        .catch(error => console.error('게시물 로드 오류:', error))
+        .finally(() => {
+            if (loadingIndicator) loadingIndicator.classList.add('hidden');
+        });
     }
 
-    // 게시물 렌더링
+    // ✅ 여기서도 div onclick 대신 a href로 뿌리기 (JS 의존 제거)
     function renderPosts(posts) {
         const masonryGrid = document.getElementById('masonryGrid');
         if (!masonryGrid) return;
@@ -186,26 +157,25 @@
         }
 
         masonryGrid.innerHTML = posts.map(post => `
-                <div
-                    onclick="navigateToView(${post.id})"
-                    class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl"
-                    style="background-color: #F9F6F1;">
-                    <img
-                        src="${post.imageUrl}"
-                        alt="${post.title}"
-                        class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
-                        style="display: block;"
-                        onerror="this.src='https://picsum.photos/400/600'"
-                    />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div class="absolute bottom-0 left-0 right-0 p-4">
-                            <h3 class="text-white" style="font-family: 'Noto Sans KR', sans-serif; font-weight: 600;">
-                                ${post.title}
-                            </h3>
-                        </div>
+            <a href="/posts/${post.id}"
+               class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl"
+               style="background-color:#F9F6F1; display:block;">
+                <img
+                    src="${post.imageUrl}"
+                    alt="${post.title}"
+                    class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
+                    style="display:block;"
+                    onerror="this.src='https://picsum.photos/400/600'"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div class="absolute bottom-0 left-0 right-0 p-4">
+                        <h3 class="text-white" style="font-family:'Noto Sans KR', sans-serif; font-weight:600;">
+                            ${post.title}
+                        </h3>
                     </div>
                 </div>
-            `).join('');
+            </a>
+        `).join('');
     }
 
     function loadMorePosts() {
@@ -221,23 +191,20 @@
                 category: activeCategory !== '전체' ? activeCategory : null
             }
         })
-            .then(response => {
-                const posts = response.data.content || response.data;
-
-                if (posts.length === 0) {
-                    hasMore = false;
-                } else {
-                    currentPage++;
-                    appendPosts(posts);
-                }
-            })
-            .catch(error => {
-                console.error('추가 게시물 로드 오류:', error);
-            })
-            .finally(() => {
-                isLoading = false;
-                if (loadingIndicator) loadingIndicator.classList.add('hidden');
-            });
+        .then(response => {
+            const posts = response.data.content || response.data;
+            if (!posts || posts.length === 0) {
+                hasMore = false;
+            } else {
+                currentPage++;
+                appendPosts(posts);
+            }
+        })
+        .catch(error => console.error('추가 게시물 로드 오류:', error))
+        .finally(() => {
+            isLoading = false;
+            if (loadingIndicator) loadingIndicator.classList.add('hidden');
+        });
     }
 
     function appendPosts(posts) {
@@ -245,26 +212,25 @@
         if (!masonryGrid) return;
 
         const postsHTML = posts.map(post => `
-                <div
-                    onclick="navigateToView(${post.id})"
-                    class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl"
-                    style="background-color: #F9F6F1;">
-                    <img
-                        src="${post.imageUrl}"
-                        alt="${post.title}"
-                        class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
-                        style="display: block;"
-                        onerror="this.src='https://picsum.photos/400/600'"
-                    />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div class="absolute bottom-0 left-0 right-0 p-4">
-                            <h3 class="text-white" style="font-family: 'Noto Sans KR', sans-serif; font-weight: 600;">
-                                ${post.title}
-                            </h3>
-                        </div>
+            <a href="/posts/${post.id}"
+               class="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 hover:shadow-xl"
+               style="background-color:#F9F6F1; display:block;">
+                <img
+                    src="${post.imageUrl}"
+                    alt="${post.title}"
+                    class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
+                    style="display:block;"
+                    onerror="this.src='https://picsum.photos/400/600'"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div class="absolute bottom-0 left-0 right-0 p-4">
+                        <h3 class="text-white" style="font-family:'Noto Sans KR', sans-serif; font-weight:600;">
+                            ${post.title}
+                        </h3>
                     </div>
                 </div>
-            `).join('');
+            </a>
+        `).join('');
 
         masonryGrid.insertAdjacentHTML('beforeend', postsHTML);
     }
@@ -272,14 +238,7 @@
     window.addEventListener('scroll', function() {
         const scrollPosition = window.innerHeight + window.scrollY;
         const threshold = document.body.offsetHeight - 500;
-
-        if (scrollPosition >= threshold) {
-            loadMorePosts();
-        }
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('메인 페이지 로드 완료');
+        if (scrollPosition >= threshold) loadMorePosts();
     });
 </script>
 </body>
