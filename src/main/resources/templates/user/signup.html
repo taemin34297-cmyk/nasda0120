@@ -201,14 +201,13 @@
 
             <div class="form-group">
                 <label for="authCode" class="form-label">인증번호</label>
-                <div class="input-with-button" style="position: relative; z-index: 1;"> <input type="text" id="authCode" class="form-input"
-                                                                                               style="background-color: white;" placeholder="6자리 숫자 입력">
+                <div class="input-with-button">
+                    <input type="text" id="authCode" class="form-input"
+                           style="background-color: white;" placeholder="6자리 숫자 입력">
                     <button type="button" class="btn-check" id="verifyBtn" onclick="verifyEmailCode()"
-                            style="background-color: #6d6158 !important; color: white !important; cursor: pointer; position: relative; z-index: 2;">
-                        인증 확인
-                    </button>
+                            style="background-color: #6d6158 !important; color: white !important;">인증 확인</button>
                 </div>
-                <p id="verify-msg" class="help-text" style="min-height: 20px; margin-top: 5px;"></p>
+                <p id="verify-msg" class="help-text"></p>
             </div>
 
             <div class="form-group">
@@ -376,56 +375,72 @@
 <script th:inline="javascript">
     let isEmailVerified = false;
 
-    function verifyEmailCode() {
-        // 1. 함수 호출 확인용 알림
-        console.log("인증 확인 버튼 클릭됨");
+    // 1. 번호 받기 함수
+    function sendEmailCode() {
+        console.log("번호 받기 클릭");
+        const email = document.getElementById('email').value;
 
+        if(!email) {
+            alert("이메일을 입력해주세요.");
+            return;
+        }
+
+        // 버튼을 여러번 누르지 못하게 잠시 비활성화
+        fetch('/user/send-code?email=' + email, { method: 'POST' })
+            .then(response => {
+                if(response.ok) {
+                    alert("인증번호가 발송되었습니다. 메일함을 확인해주세요!");
+                } else {
+                    alert("발송 실패. 이메일 주소를 확인해주세요.");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // 2. 인증 확인 함수
+    function verifyEmailCode() {
+        console.log("인증 확인 클릭");
         const codeInput = document.getElementById('authCode');
         const msg = document.getElementById('verify-msg');
 
-        if (!codeInput || !codeInput.value) {
+        if (!codeInput.value) {
             alert("인증번호를 입력해주세요.");
             return;
         }
 
-        const code = codeInput.value;
-
-        // 2. 서버에 인증 확인 요청
-        fetch('/user/verify-code?code=' + code, { method: 'POST' })
+        fetch('/user/verify-code?code=' + codeInput.value, { method: 'POST' })
             .then(res => res.json())
             .then(isSuccess => {
-                if (isSuccess) {
-                    alert("인증에 성공하였습니다! :)");
+                if(isSuccess) {
+                    alert("인증 성공!");
                     msg.innerText = "인증이 완료되었습니다. :)";
                     msg.style.color = "#8a7b6a";
                     isEmailVerified = true;
-
-                    // 입력창 잠금
+                    // 인증 성공 시 수정 불가 처리
                     document.getElementById('email').readOnly = true;
                     codeInput.readOnly = true;
                 } else {
-                    alert("인증번호가 틀렸습니다. 다시 확인해주세요.");
-                    msg.innerText = "인증번호가 틀렸습니다.";
+                    alert("인증번호가 틀렸습니다.");
+                    msg.innerText = "번호를 다시 확인해주세요.";
                     msg.style.color = "red";
                     isEmailVerified = false;
                 }
             })
-            .catch(error => {
-                console.error("에러 발생:", error);
-                alert("서버 통신 중 오류가 발생했습니다.");
-            });
+            .catch(error => console.error('Error:', error));
     }
 
-    // 폼 전송 차단 로직
-    const signupForm = document.getElementById('signupForm');
-    if (signupForm) {
-        signupForm.onsubmit = function() {
-            if (!isEmailVerified) {
-                alert("이메일 인증을 완료해야 가입이 가능합니다.");
-                return false;
-            }
-            return true;
-        };
+    // 3. 폼 전송 시 최종 체크
+    window.onload = function() {
+        const signupForm = document.getElementById('signupForm');
+        if(signupForm) {
+            signupForm.onsubmit = function() {
+                if (!isEmailVerified) {
+                    alert("이메일 인증을 완료해야 가입이 가능합니다.");
+                    return false;
+                }
+                return true;
+            };
+        }
     }
 </script>
 </body>
