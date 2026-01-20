@@ -4,6 +4,8 @@ import com.example.nasda.domain.UserEntity;
 import com.example.nasda.domain.UserRepository;
 import com.example.nasda.dto.UserJoinDto;
 import com.example.nasda.mapper.UserMapper;
+import com.example.nasda.repository.CommentRepository;
+import com.example.nasda.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,8 @@ public class UserService {
     private final UserMapper userMapper;
     private final EmailService emailService;
     private String verificationCode; // 메모리에 잠시 저장 (실무에선 Redis나 세션을 권장)
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
 
     public Optional<UserEntity> findByLoginId(String loginId) {
@@ -184,10 +188,35 @@ public class UserService {
      */
     @Transactional
     public void updatePassword(Integer userId, String newPassword) {
+            // 1. 유저 존재 확인
+            UserEntity user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+            // 2. 작성한 글과 댓글의 user_id를 DB에서 직접 null로 업데이트
+            postRepository.setAuthorNull(userId);
+            commentRepository.setAuthorNull(userId);
+
+            // 3. 이제 외래 키 제약 조건이 풀렸으므로 유저 삭제 가능
+            userRepository.delete(user);
+        }
+
+    @Transactional
+    public boolean deleteUser(Integer userId, String rawPassword) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-        user.setPassword(passwordEncoder.encode(newPassword));
-        // @Transactional이 있어 자동으로 DB에 반영됩니다.
+        // ✅ 1. 비밀번호 일치 여부 확인
+        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
+            return false; // 비밀번호 틀림
+        }
+
+        // ✅ 2. DB에서 관계 직접 끊기 (엔티티 수정 없이 빨간 줄 해결!)
+        // postRepository와 commentRepository에 우리가 만든 setAuthorNull을 호출하세요.
+        postRepository.setAuthorNull(userId);
+        commentRepository.setAuthorNull(userId);
+
+        // ✅ 3. 유저 삭제
+        userRepository.delete(user);
+        return true;
     }
-}
+    }

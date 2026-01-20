@@ -56,33 +56,49 @@ public class PostController {
             if ("create".equals(postIdStr)) return "redirect:/posts/create";
 
             Integer postId = Integer.parseInt(postIdStr);
-
             PostEntity entity = postService.get(postId);
 
+            // 1. 로그인 유저 및 본인 확인 로직 (작성자가 null일 경우 대비)
             Integer currentUserId = authUserService.getCurrentUserIdOrNull();
             boolean isOwner = currentUserId != null
                     && entity.getUser() != null
                     && currentUserId.equals(entity.getUser().getUserId());
 
+            // 2. 이미지 정보 가져오기
             List<String> imageUrls = postImageService.getImageUrls(postId);
-
-            // ✅ 추가: id+url 객체 리스트 (꾸미기/확장용)
             List<PostViewDto.ImageDto> imageItems = postService.getImageItems(postId);
 
+            // ✅ 3. 작성자(Author) 정보 안전하게 생성 (Null 처리 핵심)
+            PostViewDto.AuthorDto authorDto;
+            if (entity.getUser() != null) {
+                authorDto = new PostViewDto.AuthorDto(entity.getUser().getNickname());
+            } else {
+                // 작성자가 탈퇴하여 null인 경우 처리
+                authorDto = new PostViewDto.AuthorDto("(알 수 없음)");
+            }
+
+            // 4. 카테고리 이름 안전하게 처리
+            String categoryName = (entity.getCategory() != null)
+                    ? entity.getCategory().getCategoryName()
+                    : "미분류";
+
+            // 5. 화면에 전달할 DTO 조립
             PostViewDto post = new PostViewDto(
                     entity.getPostId(),
                     entity.getTitle(),
-                    entity.getDescription(), // content로 사용
-                    entity.getCategory().getCategoryName(),
-                    new PostViewDto.AuthorDto(entity.getUser().getNickname()),
+                    entity.getDescription() != null ? entity.getDescription() : "",
+                    categoryName,
+                    authorDto,
                     imageUrls,
                     imageItems,
                     entity.getCreatedAt(),
                     isOwner
             );
 
+            // 6. 댓글 페이지 처리
             var commentsPage = commentService.getCommentsPage(postId, page, size, currentUserId);
 
+            // 7. 모델에 데이터 담기
             model.addAttribute("post", post);
             model.addAttribute("comments", commentsPage.getContent());
             model.addAttribute("commentsPage", commentsPage);
@@ -95,7 +111,6 @@ public class PostController {
             return "redirect:/";
         }
     }
-
     @PostMapping("/posts")
     public String createPost(
             @RequestParam String title,

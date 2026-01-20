@@ -212,17 +212,26 @@
                         위험 영역
                     </p>
 
-                    <form th:action="@{/user/mypage/delete}" method="post"
-                          onsubmit="return confirm('정말 탈퇴하시겠습니까?');">
+                    <form th:action="@{/user/mypage/delete}" method="post">
+
+                        <div class="mb-4">
+                            <label class="block text-sm text-[#8B7355] mb-2 font-bold">비밀번호 확인</label>
+
+                            <input type="password"
+                                   name="password"
+                                   placeholder="비밀번호를 입력하세요"
+                                   required
+                                   class="w-full p-3 border border-[#E8D5C4] rounded-xl focus:outline-none focus:ring-1 focus:ring-[#8B7355]">
+                        </div>
+
                         <button type="submit"
-                                class="w-full py-4 border border-red-200 text-red-400 font-semibold rounded-xl hover:bg-red-50 transition-colors">
-                            계정 탈퇴
+                                class="w-full py-3 bg-red-400 text-white rounded-xl font-bold hover:bg-red-500 transition-all"
+                                onclick="return confirm('정말 탈퇴하시겠습니까?');">
+                            탈퇴 시 모든 데이터가 영구적으로 삭제됩니다.
                         </button>
+
                     </form>
                 </div>
-                <p class="text-center text-[11px] text-[#A89080] mt-2">
-                    탈퇴 시 모든 데이터가 영구적으로 삭제됩니다.
-                </p>
             </div>
         </div>
         </div>

@@ -4,11 +4,18 @@ import com.example.nasda.domain.PostEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<PostEntity, Integer> {
+
+    // PostRepository.java 및 CommentRepository.java 동일하게 추가
+    @Modifying
+    @Query("UPDATE PostEntity p SET p.user = null WHERE p.user.userId = :userId")
+    void setAuthorNull(@Param("userId") Integer userId);
 
     long countByUser_UserId(Integer userId);
 
