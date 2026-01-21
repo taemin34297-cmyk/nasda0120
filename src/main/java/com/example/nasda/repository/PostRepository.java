@@ -13,8 +13,8 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<PostEntity, Integer> {
 
     // PostRepository.java 및 CommentRepository.java 동일하게 추가
-    @Modifying
-    @Query("UPDATE PostEntity p SET p.user = null WHERE p.user.userId = :userId")
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("UPDATE PostEntity p SET p.user = NULL WHERE p.user.userId = :userId")
     void setAuthorNull(@Param("userId") Integer userId);
 
     long countByUser_UserId(Integer userId);

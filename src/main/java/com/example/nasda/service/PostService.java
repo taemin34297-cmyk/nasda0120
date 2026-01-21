@@ -152,6 +152,8 @@ public class PostService {
                     List<String> images = getImageUrls(post.getPostId());
                     List<PostViewDto.ImageDto> imageItems = getImageItems(post.getPostId());
 
+                    String nickname = (post.getUser() != null) ? post.getUser().getNickname() : "(알 수 없음)";
+
                     return new PostViewDto(
                             post.getPostId(),
                             post.getTitle(),

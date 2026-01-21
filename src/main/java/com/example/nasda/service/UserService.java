@@ -43,6 +43,7 @@ public class UserService {
         return userEntity.getUserId();
     }
 
+
     private void validateDuplicateMember(UserJoinDto dto) {
         if (userRepository.existsByLoginId(dto.getLoginId())) {
             throw new IllegalStateException("이미 존재하는 아이디입니다.");
@@ -75,8 +76,15 @@ public class UserService {
      * [수정] 파라미터 타입을 Integer로 변경
      */
     @Transactional
-    public void deleteUser(Integer id) {
-        userRepository.deleteById(id);
+    public void deleteUser(Integer userId) {
+
+        commentRepository.setAuthorNull(userId);
+
+        // 2. ✅ 유저가 쓴 게시글들의 작성자를 NULL로 변경 (새로 추가!)
+        postRepository.setAuthorNull(userId);
+
+        // 3. 이제 유저를 삭제해도 외래키 에러가 나지 않습니다.
+        userRepository.deleteById(userId);
     }
 
     /**
